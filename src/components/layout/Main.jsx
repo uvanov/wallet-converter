@@ -3,16 +3,16 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { Flex } from '@chakra-ui/react';
 
-// Local moodules
-import { Logo } from '../ui/Logo';
-
-// Styled Componets
+// Styled Components
 
 // Exports
-export const Header = () => {
+export const Main = () => {
   return (
-    <Flex alignItems='center'>
-      <Logo />
+    <Flex
+      justifyContent='center'
+      alignItems='center'
+    >
+      main
     </Flex>
   );
 }
