@@ -11,7 +11,7 @@ import UvanovLogo from '../../assets/uvanov-logo.png';
 
 // Styled Components
 const FooterLogo = styled.img`
-  width: 100px;
+  width: 60px;
   user-select: none;
 `;
 
