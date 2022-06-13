@@ -16,10 +16,6 @@ const WalletCardWrapper = styled(Flex)`
   height: 320px;
 `;
 
-
-
-
-
 // Exports
 export const WalletCard = () => {
   const [inputValue, setInputValue] = useState('');
