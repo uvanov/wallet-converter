@@ -1,9 +1,13 @@
 // Import modules
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { Flex } from '@chakra-ui/react';
 
+// Local modules
+import { WalletCard } from '../ui/WalletCard';
+
 // Styled Components
+
 
 // Exports
 export const Main = () => {
@@ -12,7 +16,7 @@ export const Main = () => {
       justifyContent='center'
       alignItems='center'
     >
-      main
+      <WalletCard />
     </Flex>
   );
 }
