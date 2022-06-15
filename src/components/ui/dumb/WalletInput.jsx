@@ -37,7 +37,11 @@ const WalletCardInputAddon = styled(Flex)`
 `;
 
 // Exports
-export const WalletInput = ({ value, onChange }) => {
+export const WalletInput = ({
+  value,
+  onChange,
+  addonText
+}) => {
   return (
     <Flex>
       <WalletCardInput
@@ -47,7 +51,7 @@ export const WalletInput = ({ value, onChange }) => {
       />
       <WalletCardInputAddon
         alignItems='center'
-        children='MDL'
+        children={addonText}
       />
     </Flex>
   );
