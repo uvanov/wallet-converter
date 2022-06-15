@@ -17,9 +17,13 @@ const WalletCardWrapper = styled(Flex)`
 `;
 
 // Exports
-export const WalletCard = () => {
-  const [inputValue, setInputValue] = useState('');
-
+export const WalletCard = ({
+  inputValue,
+  setInputValue,
+  inputAddonText,
+  tabs,
+  onTabsChange
+}) => {
   return (
     <WalletCardWrapper
       alignItems='center'
@@ -29,9 +33,15 @@ export const WalletCard = () => {
         gap='5px'
         w='100%'
       >
-        <WalletInput value={inputValue} onChange={event => setInputValue(event.target.value)} />
-
-        <WalletTabList tabs={['MDL', 'USD', 'EUR', 'RUB', 'RON', 'UAH']} onChange={() => undefined} />
+        <WalletInput
+          value={inputValue}
+          onChange={event => setInputValue(event.target.value)}
+          addonText={inputAddonText}
+        />
+        <WalletTabList
+          tabs={tabs}
+          onChange={() => onTabsChange()}
+        />
       </Flex>
     </WalletCardWrapper>
   );
