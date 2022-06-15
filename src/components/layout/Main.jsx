@@ -3,7 +3,7 @@ import React from 'react';
 import { Flex } from '@chakra-ui/react';
 
 // Local modules
-import { WalletCard } from '../ui/WalletCard';
+import { WalletCard } from '../ui/dumb/WalletCard';
 
 // Styled Components
 

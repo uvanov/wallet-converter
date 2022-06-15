@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { Flex } from '@chakra-ui/react';
 
 // Local moodules
-import { Logo } from '../ui/Logo';
+import { Logo } from '../ui/dumb/Logo';
 
 // Styled Componets
 
