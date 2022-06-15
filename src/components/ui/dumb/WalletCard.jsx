@@ -40,7 +40,7 @@ export const WalletCard = ({
         />
         <WalletTabList
           tabs={tabs}
-          onChange={() => onTabsChange()}
+          onChange={(index) => onTabsChange(index)}
         />
       </Flex>
     </WalletCardWrapper>

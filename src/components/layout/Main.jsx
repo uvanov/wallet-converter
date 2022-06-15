@@ -3,7 +3,7 @@ import React from 'react';
 import { Flex } from '@chakra-ui/react';
 
 // Local modules
-import { WalletCard } from '../ui/dumb/WalletCard';
+import { WalletCards } from '../ui/WalletCards.jsx';
 
 // Styled Components
 
@@ -14,7 +14,7 @@ export const Main = () => {
       justifyContent='center'
       alignItems='center'
     >
-      <WalletCard />
+      <WalletCards />
     </Flex>
   );
 }
