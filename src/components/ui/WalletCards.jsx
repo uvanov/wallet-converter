@@ -37,28 +37,51 @@ export const WalletCards = () => {
     response = await response.json();
     setter(response.response.value.toFixed(2));
     console.log('fetch', { from, to, amount });
-  }
+  };
 
-  useEffect(() => {
+  const onInputChange = (currentAmount, previousAmount, from, to, setter) => {
     if (primaryCurrency === secondaryCurrency) {
       return;
-    }
+    };
     clearTimeout(timer);
-
     timer = setTimeout(async () => {
-      if (primaryAmountValue !== previousState.current.primary) {
-        console.log('Primary amount was changed');
-        await fetchCurrency(primaryCurrency, secondaryCurrency, primaryAmountValue, setSecondaryAmountValue);
-        previousState.current.primary = primaryAmountValue;
-      } else if (secondaryAmountValue !== previousState.current.secondary) {
-        console.log('Secondary amount was changed');
-        await fetchCurrency(secondaryCurrency, primaryCurrency, secondaryAmountValue, setPrimaryAmountValue);
-        previousState.current.secondary = secondaryAmountValue;
+      if (currentAmount !== previousAmount) {
+        await fetchCurrency(from, to, currentAmount, setter);
+        previousAmount = currentAmount;
       }
-    }, 1000)
-    // TODO: Fetch triggers twice, because one of amounts change after fetch.
-    // Solution: Try to connect fetch with input's onChange
-  }, [primaryAmountValue, secondaryAmountValue]);
+    }, 1000);
+  };
+
+
+  useEffect(() => {
+    onInputChange(primaryAmountValue, previousState.current.primary, primaryCurrency, secondaryCurrency, setSecondaryAmountValue);
+  }, [primaryAmountValue]);
+
+  useEffect(() => {
+    onInputChange(secondaryAmountValue, previousState.current.secondary, secondaryCurrency, primaryCurrency, setPrimaryAmountValue);
+  }, [secondaryAmountValue]);
+
+
+  // useEffect(() => {
+  //   if (primaryCurrency === secondaryCurrency) {
+  //     return;
+  //   }
+  //   clearTimeout(timer);
+
+  //   timer = setTimeout(async () => {
+  //     if (primaryAmountValue !== previousState.current.primary) {
+  //       console.log('Primary amount was changed');
+  //       await fetchCurrency(primaryCurrency, secondaryCurrency, primaryAmountValue, setSecondaryAmountValue);
+  //       previousState.current.primary = primaryAmountValue;
+  //     } else if (secondaryAmountValue !== previousState.current.secondary) {
+  //       console.log('Secondary amount was changed');
+  //       await fetchCurrency(secondaryCurrency, primaryCurrency, secondaryAmountValue, setPrimaryAmountValue);
+  //       previousState.current.secondary = secondaryAmountValue;
+  //     }
+  //   }, 1000)
+  //   // TODO: Fetch triggers twice, because one of amounts change after fetch.
+  //   // Solution: Try to connect fetch with input's onChange
+  // }, [primaryAmountValue, secondaryAmountValue]);
 
   useEffect(() => {
     if (!primaryAmountValue) {
@@ -78,7 +101,7 @@ export const WalletCards = () => {
     >
       <WalletCard
         inputValue={primaryAmountValue}
-        setInputValue={setPrimaryAmountValue}
+        onInputChange={event => setPrimaryAmountValue(event.target.value)}
         inputAddonText={primaryCurrency}
         tabs={currencies}
         onTabsChange={onPrimaryCurrencyChange}
@@ -92,7 +115,7 @@ export const WalletCards = () => {
       </Text>
       <WalletCard
         inputValue={secondaryAmountValue}
-        setInputValue={setSecondaryAmountValue}
+        onInputChange={event => setSecondaryAmountValue(event.target.value)}
         inputAddonText={secondaryCurrency}
         tabs={currencies}
         onTabsChange={onSecondaryCurrencyChange}
