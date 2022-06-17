@@ -19,10 +19,7 @@ export const WalletCards = () => {
   const [secondaryCurrency, setSecondaryCurrency] = useState('USD');
 
 
-  const previousState = useRef({
-    primary: primaryAmountValue,
-    secondary: secondaryAmountValue
-  });
+  const isFetchAble = useRef(true);
 
   const onPrimaryCurrencyChange = index => {
     setPrimaryCurrency(currencies[index]);
@@ -33,65 +30,43 @@ export const WalletCards = () => {
   };
 
   const fetchCurrency = async (from, to, amount, setter) => {
-    let response = await fetch(`https://api.currencyscoop.com/v1/convert?api_key=fc57983ac60466a17590c48facaf0bdc&from=${from}&to=${to}&amount=${amount}`);
-    response = await response.json();
-    setter(response.response.value.toFixed(2));
-    console.log('fetch', { from, to, amount });
+    if (isFetchAble.current) {
+      let response = await fetch(`https://api.currencyscoop.com/v1/convert?api_key=fc57983ac60466a17590c48facaf0bdc&from=${from}&to=${to}&amount=${amount}`);
+      response = await response.json();
+      setter(response.response.value.toFixed(2));
+      isFetchAble.current = false;
+      console.log('fetch', { from, to, amount });
+    } else {
+      isFetchAble.current = true;
+    }
   };
 
-  const onInputChange = (currentAmount, previousAmount, from, to, setter) => {
+  const onInputChange = (from, to, currentAmount, setter) => {
     if (primaryCurrency === secondaryCurrency) {
       return;
     };
     clearTimeout(timer);
+
     timer = setTimeout(async () => {
-      if (currentAmount !== previousAmount) {
-        await fetchCurrency(from, to, currentAmount, setter);
-        previousAmount = currentAmount;
-      }
-    }, 1000);
+      await fetchCurrency(from, to, currentAmount, setter);
+    }, 500);
   };
 
 
   useEffect(() => {
-    onInputChange(primaryAmountValue, previousState.current.primary, primaryCurrency, secondaryCurrency, setSecondaryAmountValue);
+    onInputChange(primaryCurrency, secondaryCurrency, primaryAmountValue, setSecondaryAmountValue);
   }, [primaryAmountValue]);
 
   useEffect(() => {
-    onInputChange(secondaryAmountValue, previousState.current.secondary, secondaryCurrency, primaryCurrency, setPrimaryAmountValue);
+    onInputChange(secondaryCurrency, primaryCurrency, secondaryAmountValue, setPrimaryAmountValue);
   }, [secondaryAmountValue]);
-
-
-  // useEffect(() => {
-  //   if (primaryCurrency === secondaryCurrency) {
-  //     return;
-  //   }
-  //   clearTimeout(timer);
-
-  //   timer = setTimeout(async () => {
-  //     if (primaryAmountValue !== previousState.current.primary) {
-  //       console.log('Primary amount was changed');
-  //       await fetchCurrency(primaryCurrency, secondaryCurrency, primaryAmountValue, setSecondaryAmountValue);
-  //       previousState.current.primary = primaryAmountValue;
-  //     } else if (secondaryAmountValue !== previousState.current.secondary) {
-  //       console.log('Secondary amount was changed');
-  //       await fetchCurrency(secondaryCurrency, primaryCurrency, secondaryAmountValue, setPrimaryAmountValue);
-  //       previousState.current.secondary = secondaryAmountValue;
-  //     }
-  //   }, 1000)
-  //   // TODO: Fetch triggers twice, because one of amounts change after fetch.
-  //   // Solution: Try to connect fetch with input's onChange
-  // }, [primaryAmountValue, secondaryAmountValue]);
 
   useEffect(() => {
     if (!primaryAmountValue) {
       return;
     }
 
-    (async function () {
-      console.log('currency was changed');
-      await fetchCurrency(primaryCurrency, secondaryCurrency, primaryAmountValue, setSecondaryAmountValue);
-    })();
+    fetchCurrency(primaryCurrency, secondaryCurrency, primaryAmountValue, setSecondaryAmountValue);
   }, [primaryCurrency, secondaryCurrency]);
 
   return (
