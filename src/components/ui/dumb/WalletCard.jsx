@@ -19,7 +19,7 @@ const WalletCardWrapper = styled(Flex)`
 // Exports
 export const WalletCard = ({
   inputValue,
-  setInputValue,
+  onInputChange,
   inputAddonText,
   tabs,
   onTabsChange
@@ -35,7 +35,7 @@ export const WalletCard = ({
       >
         <WalletInput
           value={inputValue}
-          onChange={event => setInputValue(event.target.value)}
+          onChange={event => onInputChange(event)}
           addonText={inputAddonText}
         />
         <WalletTabList
