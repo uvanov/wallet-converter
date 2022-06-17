@@ -31,4 +31,4 @@ Used technologies:
 </ul>
 
 <br />
-<strong>Demo: </strong> <a href="https://example.com">link</a>
+<strong>Demo: </strong> <a href="https://wallet-converter.netlify.app">link</a>
