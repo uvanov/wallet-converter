@@ -1,5 +1,5 @@
 // Import modules
-import React, { useState } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import { Flex } from '@chakra-ui/react';
 
