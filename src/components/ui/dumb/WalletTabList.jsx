@@ -29,7 +29,7 @@ export const WalletTabList = ({ tabs, onChange }) => {
           tabs?.map(tab => (
             <WalletTab
               _selected={{ bg: '#7DD835' }}
-              key={Date.now() + Math.random()}
+              key={tab}
             >
               {tab}
             </WalletTab>

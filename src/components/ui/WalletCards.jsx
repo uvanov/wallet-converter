@@ -1,5 +1,5 @@
 // Import modules
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Flex,
   Text
@@ -9,49 +9,65 @@ import {
 import { WalletCard } from './dumb/WalletCard';
 
 let timer;
+const currencies = ['USD', 'EUR', 'MDL', 'RUB', 'RON', 'UAH'];
 
 // Exports
 export const WalletCards = () => {
-  const [amountValue, setAmountValue] = useState('');
-  const [convertedValue, setConvertedValue] = useState('0');
-  const [currencyFrom, setCurrencyFrom] = useState('USD');
-  const [currencyTo, setCurrencyTo] = useState('USD');
+  const [primaryAmountValue, setPrimaryAmountValue] = useState('');
+  const [secondaryAmountValue, setSecondaryAmountValue] = useState('');
+  const [primaryCurrency, setPrimaryCurrency] = useState('USD');
+  const [secondaryCurrency, setSecondaryCurrency] = useState('USD');
 
-  const currencies = ['USD', 'EUR', 'MDL', 'RUB', 'RON', 'UAH'];
 
-  const onCurrentyFromChange = index => {
-    setCurrencyFrom(currencies[index]);
+  const isFetchAble = useRef(true);
+
+  const onPrimaryCurrencyChange = index => {
+    setPrimaryCurrency(currencies[index]);
   };
 
-  const onCurrencyToChange = index => {
-    setCurrencyTo(currencies[index]);
+  const onSecondaryCurrencyChange = index => {
+    setSecondaryCurrency(currencies[index]);
   };
 
-  const fetchCurrency = useCallback(async () => {
-    let response = await fetch(`https://api.currencyscoop.com/v1/convert?api_key=fc57983ac60466a17590c48facaf0bdc&from=${currencyFrom}&to=${currencyTo}&amount=${amountValue}`);
-    response = await response.json();
-    setConvertedValue(response.response.value.toFixed(2));
-  }, [amountValue, currencyFrom, currencyTo]);
-
-  useEffect(() => {
-    if (!amountValue || currencyFrom === currencyTo) {
-      return;
+  const fetchCurrency = async (from, to, amount, setter) => {
+    if (isFetchAble.current) {
+      let response = await fetch(`https://api.currencyscoop.com/v1/convert?api_key=fc57983ac60466a17590c48facaf0bdc&from=${from}&to=${to}&amount=${amount}`);
+      response = await response.json();
+      setter(response.response.value.toFixed(2));
+      isFetchAble.current = false;
+      console.log('fetch', { from, to, amount });
+    } else {
+      isFetchAble.current = true;
     }
+  };
+
+  const onInputChange = (from, to, currentAmount, setter) => {
+    if (primaryCurrency === secondaryCurrency) {
+      return;
+    };
     clearTimeout(timer);
+
     timer = setTimeout(async () => {
-      await fetchCurrency();
-    }, 1000)
-  }, [amountValue]);
+      await fetchCurrency(from, to, currentAmount, setter);
+    }, 500);
+  };
+
 
   useEffect(() => {
-    if (!amountValue) {
+    onInputChange(primaryCurrency, secondaryCurrency, primaryAmountValue, setSecondaryAmountValue);
+  }, [primaryAmountValue]);
+
+  useEffect(() => {
+    onInputChange(secondaryCurrency, primaryCurrency, secondaryAmountValue, setPrimaryAmountValue);
+  }, [secondaryAmountValue]);
+
+  useEffect(() => {
+    if (!primaryAmountValue) {
       return;
     }
 
-    (async function () {
-      await fetchCurrency();
-    })();
-  }, [currencyFrom, currencyTo]);
+    fetchCurrency(primaryCurrency, secondaryCurrency, primaryAmountValue, setSecondaryAmountValue);
+  }, [primaryCurrency, secondaryCurrency]);
 
   return (
     <Flex
@@ -59,11 +75,11 @@ export const WalletCards = () => {
       gap='20px'
     >
       <WalletCard
-        inputValue={amountValue}
-        setInputValue={setAmountValue}
-        inputAddonText={currencyFrom}
+        inputValue={primaryAmountValue}
+        onInputChange={event => setPrimaryAmountValue(event.target.value)}
+        inputAddonText={primaryCurrency}
         tabs={currencies}
-        onTabsChange={onCurrentyFromChange}
+        onTabsChange={onPrimaryCurrencyChange}
       />
       <Text
         fontWeight='bold'
@@ -73,10 +89,11 @@ export const WalletCards = () => {
         =
       </Text>
       <WalletCard
-        inputValue={convertedValue}
-        inputAddonText={currencyTo}
+        inputValue={secondaryAmountValue}
+        onInputChange={event => setSecondaryAmountValue(event.target.value)}
+        inputAddonText={secondaryCurrency}
         tabs={currencies}
-        onTabsChange={onCurrencyToChange}
+        onTabsChange={onSecondaryCurrencyChange}
       />
     </Flex>
   );
